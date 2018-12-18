@@ -139,6 +139,12 @@ button:hover {
   Helper Classes
 ==================================== */
 
+.timeConflict {
+  color: lightgray;
+  text-decoration: line-through;
+  pointer-events: none;
+}
+
 .is-hidden {
 	display: none;
 }
