@@ -1,7 +1,7 @@
-#Treehouse Project 3: Interactive Form
+**Treehouse Project 3: Interactive Form**
 This project uses a combination of jquery and vanilla javascript. The page still works if js is disabled. All errors except for the register button "Please fix errors" error are displayed.
 
-##Sections
+**Sections**
 
 **Basic Info**
 Name and email must not be empty. Both will show errors if blurred, or tried to submit if empty. Email also must be a valid email address with a different error showing if it is not.
