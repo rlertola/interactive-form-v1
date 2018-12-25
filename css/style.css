@@ -9,13 +9,13 @@
 body,
 input,
 button {
- font-family: 'Roboto', sans-serif;
+  font-family: 'Lato', sans-serif;
 }
 
 body {
   font: 1em/1.5;
   color: #184f68;
-	background: #accbd9;
+	background: #f1f5f7;
 }
 
 header {
@@ -38,7 +38,8 @@ a {
 
 form {
 	padding: .875em 1.875em 1.875em;
-	background: #85b5ca;
+  background: #85b5ca;
+  border-radius: 5px;
 }
 
 fieldset,
@@ -67,7 +68,8 @@ legend {
 input[type="text"],
 input[type="email"],
 legend {
-	width: 100%;
+  width: 100%;
+  border-radius: 5px;
 }
 
 label {
@@ -78,7 +80,13 @@ label {
 
 input,
 select {
-	margin-bottom: 1.125em;
+  margin-bottom: 1.125em;
+
+}
+
+select {
+  height: 38px;
+  font-size: 0.8em;
 }
 
 input {
@@ -98,7 +106,10 @@ input:focus {
 
 input[type="checkbox"],
 input[type="radio"] {
-	display: inline-block;
+  display: inline-block;
+}
+input[type=checkbox]:checked {
+  color: rebeccapurple;
 }
 
 button {
@@ -115,10 +126,9 @@ button:hover {
 }
 
 .tips {
-  color: rgb(243, 8, 8);
+  color: rgb(204, 7, 7);
   padding: 5px;
   font-size: 12px;
-  vertical-align: middle;
 }
 
 /* =================================
@@ -151,10 +161,7 @@ button:hover {
   color: lightgray;
   text-decoration: line-through;
   pointer-events: none;
-}
-
-.is-hidden {
-	display: none;
+	transition: 0.5s;
 }
 
 .clearfix::after {

@@ -4,16 +4,14 @@ $(function() {
   $('#name').focus();
   showAndHide('credit-card', 'bitcoinOption', 'paypalOption');
   hideIt('#other-title');
-  hideIt('#colors-js-puns');
-  hideIt('#mailTip');
-  hideIt('#ccNumTip');
-  hideIt('#ccZipTip');
-  hideIt('#ccCvvTip');
-  hideIt('#altTip');
-  hideIt('#activityTip');
-  hideIt('#registerTip');
-  // disableRegisterButton();
+  hideAllTips();
 })
+
+const hideAllTips = () => {
+  $('.tips').each((i, tip) => {
+    hideIt(tip);
+  })
+}
 
 // Helper functions for showing/hiding.
 const showIt = (id) => {
@@ -21,17 +19,6 @@ const showIt = (id) => {
 }
 const hideIt = (id) => {
   $(id).hide();
-}
-
-/* Helper function for enabling/disabling the register button.
-Disabled when any field is empty or invalid. */
-const enableRegisterButton = () => {
-  hideIt('#registerTip');
-  $('#registerButton').attr('disabled', false);
-}
-const disableRegisterButton = () => {
-  showIt('#registerTip');
-  $('#registerButton').attr('disabled', true);
 }
 
 
@@ -72,6 +59,7 @@ const displayColors = (id, string) => {
     }
   })
 }
+
 
 // REGISTER FOR ACTIVITIES SECTION
 /* Gets the string with the activity info, extracts the amount,
@@ -134,12 +122,10 @@ $('.activities').on('change', (e) => {
 // Gets total cost of activities checked.
 const getTotal = (amtsArray) => {
   if (amtsArray.length > 0) {
-    // enableRegisterButton();
     return amtsArray.reduce((a, b) => {
       return a + b;
     })
   } else {
-    // disableRegisterButton();
     return 0;
   }
 }
@@ -171,36 +157,15 @@ const showAndHide = (show, hide1, hide2) => {
 
 // Name field can't be blank.
 $('#name')
+  .on('input', (e) => {
+    hideIt('#nameTip');
+    displayErrors(e, '#nameTip', checkIfNotBlank);
+  })
   .blur((e) => {
-    if (e.target.value === '') {
+    if (!checkIfNotBlank(e.target.value)) {
       showIt('#nameTip');
-      // disableRegisterButton();
-    } else {
-      hideIt('#nameTip');
-      // enableRegisterButton();
     }
   })
-  .focus(() => {
-    hideIt('#nameTip');
-    // disableRegisterButton();
-  })
-
-// Must be a valid email address.
-const isValidEmail = (email) => {
-  return /^[^@]+@[^@.]+\.[a-z]+$/i.test(email);
-}
-
-// Helper function to show error messages.
-const displayErrors = (e, id, checkerFunc) => {
-  const valid = checkerFunc(e.target.value);
-  if (valid) {
-    hideIt(id);
-    // enableRegisterButton();
-  } else {
-    showIt(id);
-    // disableRegisterButton();
-  }
-}
 
 /* Hides the alt tip and shows the valid email tip if field isn't empty.
 If empty, shows the alt tip and hides the valid email tip. */
@@ -210,29 +175,45 @@ $('#mail')
     displayErrors(e, '#mailTip', isValidEmail);
   })
   .blur((e) => {
-    if (e.target.value === '') {
+    if (!checkIfNotBlank(e.target.value)) {
       hideIt('#mailTip');
       showIt('#altTip');
-      // disableRegisterButton();
     }
   })
+
+// Helper function to check if name or email field is empty.
+const checkIfNotBlank = (text) => text !== '';
+
+// Must be a valid email address.
+const isValidEmail = (email) => {
+  return /^[^@]+@[^@.]+\.[a-z]+$/i.test(email);
+}
+
+// Helper function to check if at least one activity is checked.
+const checkIfOneChecked = (array) => array.length > 0;
+
+// Helper function to show error messages.
+const displayErrors = (e, id, checkerFunc) => {
+  const valid = checkerFunc(e.target.value);
+  if (valid) {
+    anyErrors();
+    hideIt(id);
+  } else {
+    showIt(id);
+  }
+}
 
 
 // PAYMENT INFO SECTION
 // Credit card field should be a number between 13-16 digits.
-const isValidCreditCard = (ccNumber) => {
-  return checkCCInfo(ccNumber, 13, 16);
-}
+const isValidCreditCard = (ccNumber) => checkCCInfo(ccNumber, 13, 16);
 
 // The Zip Code field should be a 5-digit number.
-const isValidZip = (zipCode) => {
-  return checkCCInfo(zipCode, 5, 5);
-}
+const isValidZip = (zipCode) => checkCCInfo(zipCode, 5, 5);
 
 // The CVV should be 3 digits long.
-const isValidCVV = (CVV) => {
-  return checkCCInfo(CVV, 3, 3);
-}
+const isValidCVV = (CVV) => checkCCInfo(CVV, 3, 3);
+
 
 // Helper function to validate cc number, zip and cvv.
 const checkCCInfo = (numType, min, max) => {
@@ -255,37 +236,54 @@ const checkCCInfo = (numType, min, max) => {
 }
 
 // Shows error messages for cc number, zip and cvv.
-$('#cc-num').blur((e) => {
+$('#cc-num').on('input blur', (e) => {
   displayErrors(e, '#ccNumTip', isValidCreditCard);
 })
-$('#zip').blur((e) => {
+$('#zip').on('input blur', (e) => {
   displayErrors(e, '#ccZipTip', isValidZip);
-});
-$('#cvv').blur((e) => {
+})
+$('#cvv').on('input blur', (e) => {
   displayErrors(e, '#ccCvvTip', isValidCVV);
-});
-
-
-/* At least one activity must be selected or
-register button will be disabled. */
-$('#registerButton').on('click', (e) => {
-  if (amountArray.length === 0) {
-    e.preventDefault();
-    showIt('#activityTip');
-    showIt('#registerTip')
-  }
-  checkTip(e, '#nameTip');
-  checkTip(e, '#altTip');
-  checkTip(e, '#ccNumTip');
-  checkTip(e, '#ccZipTip');
-  checkTip(e, '#ccCvvTip');
 })
 
-const checkTip = (e, id) => {
-  if ($(id).css('display') !== 'none') {
-    showIt(id);
-    showIt('#registerTip')
-    e.preventDefault();
+
+/* If the register button is clicked without ever touching the fields, it will check again if there should be any errors and shows any necessary error messages. E.g., If you immediately scrolled to the bottom and tried to push register without ever focusing or blurring fields. */
+$('#registerButton').on('click', (e) => {
+  const name = checkIfNotBlank($('#name').val());
+  const mailEmpty = checkIfNotBlank($('#mail').val());
+  const mail = isValidEmail($('#mail').val());
+  const activity = checkIfOneChecked(amountArray);
+  const ccNum = isValidCreditCard($('#cc-num').val());
+  const ccZip = isValidZip($('#zip').val());
+  const ccCvv = isValidCVV($('#cvv').val());
+
+  const checker = (field, show) => {
+    if (!field) {
+      showIt(show);
+      showIt('#registerTip');
+      e.preventDefault();
+    }
+  }
+
+  checker(name, '#nameTip');
+  checker(mailEmpty, '#altTip');
+  checker(mail, '#mailTip');
+  checker(activity, '#activityTip');
+  checker(ccNum, '#ccNumTip');
+  checker(ccZip, '#ccZipTip');
+  checker(ccCvv, '#ccCvvTip');
+})
+
+// Checks everything in the 'tips' class to see if any errors. Used in displayErrors function.
+const anyErrors = () => {
+  let errors = 0;
+  $('.tips').each((i, tip) => {
+    if (tip.style.display !== 'none' && tip.id !== 'registerTip') {
+      errors++;
+    }
+  })
+  if (errors === 1) {
+    hideIt('#registerTip');
   }
 }
 

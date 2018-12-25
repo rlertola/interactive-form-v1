@@ -7,6 +7,7 @@
   <title>Register for Full Stack Conf</title>
   <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700" rel="stylesheet" type="text/css">
   <link rel="stylesheet" href="css/style.css">
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
 </head>
 
 <body>
@@ -88,7 +89,7 @@
 
       <fieldset class="activities">
         <legend>Register for Activities<span class="tips" id="activityTip">Please select at least one activity</span></legend>
-        <label><input type="checkbox" name="all"> Main Conference — $200</label>
+        <label><input class="checkedBox" type="checkbox" name="all"> Main Conference — $200</label>
         <label><input type="checkbox" name="js-frameworks"> JavaScript Frameworks Workshop — Tuesday 9am-12pm, $100</label>
         <label><input type="checkbox" name="js-libs"> JavaScript Libraries Workshop — Tuesday 1pm-4pm, $100</label>
         <label><input type="checkbox" name="express"> Express Workshop — Tuesday 9am-12pm, $100</label>
@@ -148,6 +149,8 @@
             <option value="2019">2019</option>
             <option value="2020">2020</option>
           </select>
+
+
         </div>
 
         <div>
@@ -165,7 +168,7 @@
       </fieldset>
 
       <button id="registerButton" type="submit">Register</button>
-      <span class="tips" id="registerTip">Please fix errors</span>
+      <span style="display: none" class="tips" id="registerTip">Please fix errors</span>
 
     </form>
 
