@@ -4,6 +4,7 @@ $(function() {
   $('#name').focus();
   showAndHide('credit-card', 'bitcoinOption', 'paypalOption');
   hideIt('#other-title');
+  hideIt('#colors-js-puns');
   hideAllTips();
 })
 
@@ -158,17 +159,18 @@ const showAndHide = (show, hide1, hide2) => {
 // Name field can't be blank.
 $('#name')
   .on('input', (e) => {
-    hideIt('#nameTip');
-    displayErrors(e, '#nameTip', checkIfNotBlank);
+    hideIt('#nameBlankTip');
+    // displayErrors(e, '#nameBlankTip', checkIfNotBlank);
+    displayErrors(e, '#nameInvalidTip', isValidName);
   })
   .blur((e) => {
     if (!checkIfNotBlank(e.target.value)) {
-      showIt('#nameTip');
+      showIt('#nameBlankTip');
+      hideIt('#nameInvalidTip');
     }
   })
 
-/* Hides the alt tip and shows the valid email tip if field isn't empty.
-If empty, shows the alt tip and hides the valid email tip. */
+/* Hides the alt tip and shows the valid email tip if field isn't empty. If empty, shows the alt tip and hides the valid email tip. */
 $('#mail')
   .on('input', (e) => {
     hideIt('#altTip');
@@ -184,6 +186,9 @@ $('#mail')
 // Helper function to check if name or email field is empty.
 const checkIfNotBlank = (text) => text !== '';
 
+const isValidName = (name) => {
+  return /^[a-zA-Z]+$/.test(name);
+}
 // Must be a valid email address.
 const isValidEmail = (email) => {
   return /^[^@]+@[^@.]+\.[a-z]+$/i.test(email);
@@ -217,8 +222,8 @@ const isValidCVV = (CVV) => checkCCInfo(CVV, 3, 3);
 
 // Helper function to validate cc number, zip and cvv.
 const checkCCInfo = (numType, min, max) => {
-  const isNumber = parseInt(numType);
-  if (isNumber) {
+  const isNotNumber = isNaN(numType);
+  if (!isNotNumber) {
     const length = numType.toString().length;
     if (min === max) {
       if (length === min) {
@@ -249,7 +254,8 @@ $('#cvv').on('input blur', (e) => {
 
 /* If the register button is clicked without ever touching the fields, it will check again if there should be any errors and shows any necessary error messages. E.g., If you immediately scrolled to the bottom and tried to push register without ever focusing or blurring fields. */
 $('#registerButton').on('click', (e) => {
-  const name = checkIfNotBlank($('#name').val());
+  const nameEmpty = checkIfNotBlank($('#name').val());
+  const name = isValidName($('#name').val());
   const mailEmpty = checkIfNotBlank($('#mail').val());
   const mail = isValidEmail($('#mail').val());
   const activity = checkIfOneChecked(amountArray);
@@ -265,7 +271,8 @@ $('#registerButton').on('click', (e) => {
     }
   }
 
-  checker(name, '#nameTip');
+  checker(name, '#nameInvalidTip');
+  checker(nameEmpty, '#nameBlankTip');
   checker(mailEmpty, '#altTip');
   checker(mail, '#mailTip');
   checker(activity, '#activityTip');

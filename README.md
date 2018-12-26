@@ -6,7 +6,7 @@ This project uses a combination of jquery and vanilla javascript. The page still
 
 **Basic Info**
 
-Name and email must not be empty. Both will show errors if blurred, or tried to submit if empty. Email also must be a valid email address with a different error showing if it is not.
+Name and email must not be empty. Both will show errors if blurred, or tried to submit if empty. Name must not contain anything but letters. Email also must be a valid email address with a different error showing if it is not.
 
 If 'other' job role is selected from the dropdown, a box to input the role appears, and hides if another option is selected.
 
