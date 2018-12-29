@@ -34,7 +34,8 @@
           <input type="email" id="mail" name="user_email">
         </p>
 
-        <label for="title">Job Role</label>
+        <label for="title">Job Role<span class="tips" id="otherTip">Please enter a
+            valid role</span></label>
         <select id="title" name="user_title">
           <option value="full-stack js developer">Full Stack JavaScript Developer</option>
           <option value="front-end developer">Front End Developer</option>
@@ -47,7 +48,7 @@
       </fieldset>
 
       <fieldset class="shirt">
-        <legend>T-Shirt Info</legend>
+        <legend>T-Shirt Info<span class="tips" id="tshirtTip">Who doesn't want a t-shirt?!</span></legend>
 
         <div>
           <label for="size">Size:</label>
@@ -68,21 +69,16 @@
           </select>
         </div>
 
-        <div id="colors-js-puns" class="">
+        <div id="colors-js-puns">
           <label for="color">Color:</label>
           <select id="color">
             <option id="defaultOption" disabled="disabled" selected="selected"></option>
-            <!-- <optgroup id="jsPuns" label=""> -->
             <option value="cornflowerblue">Cornflower Blue (JS Puns shirt only)</option>
             <option value="darkslategrey">Dark Slate Grey (JS Puns shirt only)</option>
             <option value="gold">Gold (JS Puns shirt only)</option>
-            <!-- </optgroup> -->
-            <!-- <optgroup id="jsShirts" label="JS Shirts"> -->
             <option value="tomato">Tomato (I &#9829; JS shirt only)</option>
             <option value="steelblue">Steel Blue (I &#9829; JS shirt only)</option>
             <option value="dimgrey">Dim Grey (I &#9829; JS shirt only)</option>
-            <!-- </optgroup> -->
-
           </select>
         </div>
       </fieldset>

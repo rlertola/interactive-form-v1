@@ -28,7 +28,9 @@ const hideIt = (id) => {
 $('#title').on('change', (e) => {
   if (e.target.value === 'other') {
     showIt('#other-title');
+    $('#other-title').focus();
   } else {
+    anyErrors();
     hideIt('#other-title');
   }
 })
@@ -47,11 +49,34 @@ $('#design').on('change', (e) => {
   if (e.target.value === 'Select Theme') {
     hideIt('#colors-js-puns');
   }
+
+  // Choosing a new theme changes the value of the selection, so that an incompatible color cannot be selected.;
+  $('#color').val($('#defaultOption').text());
 })
+
+$('#color').on('change', () => {
+  isValidTShirt();
+});
+
+// Checks if a tshirt is selected.
+const isValidTShirt = () => {
+  const colors = $('#colors-js-puns');
+  const color = $('#color');
+  if (colors.css('display') !== 'none') {
+    if (color.val() !== null) {
+      anyErrors();
+      hideIt('#tshirtTip');
+      return true;
+    }
+  }
+  return false;
+}
+
 
 // Helper function for displaying shirt options.
 const displayColors = (id, string) => {
-  $('#defaultOption').text('Select Color');
+  const defaultText = 'Select Color';
+  $('#defaultOption').text(defaultText);
   $(id).children().each((i, item) => {
     if (!item.text.includes(string)) {
       hideIt(item);
@@ -67,7 +92,8 @@ const displayColors = (id, string) => {
 day and time, and blocks out any time conflicts. */
 let amountArray = [];
 $('.activities').on('change', (e) => {
-  hideIt('#activityTip')
+  anyErrors();
+  hideIt('#activityTip');
   const parent = e.target.parentElement;
   const string = parent.textContent;
 
@@ -116,6 +142,7 @@ $('.activities').on('change', (e) => {
       }
     }
   })
+
   // Displays the total cost of activities checked.
   $('#total').text(`Total: $${getTotal(amountArray)}`);
 })
@@ -160,7 +187,6 @@ const showAndHide = (show, hide1, hide2) => {
 $('#name')
   .on('input', (e) => {
     hideIt('#nameBlankTip');
-    // displayErrors(e, '#nameBlankTip', checkIfNotBlank);
     displayErrors(e, '#nameInvalidTip', isValidName);
   })
   .blur((e) => {
@@ -183,7 +209,30 @@ $('#mail')
     }
   })
 
-// Helper function to check if name or email field is empty.
+// If the 'other' job role is selected, the input field cannot be blank, or another option must be selected.
+$('#other-title').on('input blur', (e) => {
+  displayErrors(e, '#otherTip', checkIfNotBlank);
+})
+
+$('#title').on('change', (e) => {
+  if ($('#jobRole').val() !== 'other') {
+    hideIt('#otherTip');
+  }
+})
+
+const isValidRole = (value) => {
+  if (value !== 'other') {
+    return true;
+  }
+  if (value === 'other' && checkIfNotBlank($('#other-title').val())) {
+    anyErrors();
+    return true;
+  }
+  return false;
+}
+
+
+// Helper function to check if name, email, or other job roles field is empty.
 const checkIfNotBlank = (text) => text !== '';
 
 const isValidName = (name) => {
@@ -195,7 +244,11 @@ const isValidEmail = (email) => {
 }
 
 // Helper function to check if at least one activity is checked.
-const checkIfOneChecked = (array) => array.length > 0;
+const checkIfOneChecked = (array) => {
+  if (array.length > 0) {
+    return true;
+  }
+}
 
 // Helper function to show error messages.
 const displayErrors = (e, id, checkerFunc) => {
@@ -218,7 +271,6 @@ const isValidZip = (zipCode) => checkCCInfo(zipCode, 5, 5);
 
 // The CVV should be 3 digits long.
 const isValidCVV = (CVV) => checkCCInfo(CVV, 3, 3);
-
 
 // Helper function to validate cc number, zip and cvv.
 const checkCCInfo = (numType, min, max) => {
@@ -251,14 +303,35 @@ $('#cvv').on('input blur', (e) => {
   displayErrors(e, '#ccCvvTip', isValidCVV);
 })
 
+const isValidPmtOption = (value) => {
+  return value !== 'credit card';
+}
+// If a non-credit card payment option is selected, all CC info and tips are cleared.
+$('#payment').on('change', (e) => {
+  if (e.target.value !== 'credit card') {
+    clearPaymentInfo();
+  }
+})
+// Helper function
+const clearPaymentInfo = () => {
+  $('#cc-num').val('');
+  $('#zip').val('');
+  $('#cvv').val('');
+  hideIt('#ccNumTip');
+  hideIt('#ccZipTip');
+  hideIt('#ccCvvTip');
+}
 
-/* If the register button is clicked without ever touching the fields, it will check again if there should be any errors and shows any necessary error messages. E.g., If you immediately scrolled to the bottom and tried to push register without ever focusing or blurring fields. */
+// When the register button is clicked it will check if there should be errors and displays them.
 $('#registerButton').on('click', (e) => {
   const nameEmpty = checkIfNotBlank($('#name').val());
   const name = isValidName($('#name').val());
   const mailEmpty = checkIfNotBlank($('#mail').val());
   const mail = isValidEmail($('#mail').val());
+  const otherRole = isValidRole($('#title').val());
+  const tshirt = isValidTShirt();
   const activity = checkIfOneChecked(amountArray);
+  const pmtOption = isValidPmtOption($('#payment').val());
   const ccNum = isValidCreditCard($('#cc-num').val());
   const ccZip = isValidZip($('#zip').val());
   const ccCvv = isValidCVV($('#cvv').val());
@@ -275,13 +348,19 @@ $('#registerButton').on('click', (e) => {
   checker(nameEmpty, '#nameBlankTip');
   checker(mailEmpty, '#altTip');
   checker(mail, '#mailTip');
+  checker(otherRole, '#otherTip');
   checker(activity, '#activityTip');
-  checker(ccNum, '#ccNumTip');
-  checker(ccZip, '#ccZipTip');
-  checker(ccCvv, '#ccCvvTip');
+  checker(tshirt, '#tshirtTip');
+
+  // If credit card is selected.
+  if (!pmtOption) {
+    checker(ccNum, '#ccNumTip');
+    checker(ccZip, '#ccZipTip');
+    checker(ccCvv, '#ccCvvTip');
+  }
 })
 
-// Checks everything in the 'tips' class to see if any errors. Used in displayErrors function.
+// Checks everything in the 'tips' class to see if any errors.
 const anyErrors = () => {
   let errors = 0;
   $('.tips').each((i, tip) => {
@@ -293,6 +372,7 @@ const anyErrors = () => {
     hideIt('#registerTip');
   }
 }
+
 
 
 
