@@ -4,8 +4,7 @@ This project uses a combination of jquery and vanilla javascript. The page still
 
 ### Sections
 
--Every section is validated and will throw at least one error.
--Text inputs are checked when blurred, and all are checked when the register button is clicked.
+Every section is validated and will throw at least one error. Text inputs are checked when blurred, and all are checked when the register button is clicked.
 
 ### Basic Info
 
